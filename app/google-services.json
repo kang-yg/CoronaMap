@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "424347219019",
+    "firebase_url": "https://coronamap-4f0bc.firebaseio.com",
+    "project_id": "coronamap-4f0bc",
+    "storage_bucket": "coronamap-4f0bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424347219019:android:bc3403250d2a8d61f749ce",
+        "android_client_info": {
+          "package_name": "com.yg.coronamap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424347219019-0hh8c3bmd9riue2p2d8pcnpih4s5773s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yg.coronamap",
+            "certificate_hash": "2019c92af78df528e8de1f917273ea9f71909d0c"
+          }
+        },
+        {
+          "client_id": "424347219019-7bvlr19k8a6mad0a13hlmjh3kv3gujbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7rq-u8Sx77n2X9BOoW6Woa2c2CACX32c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424347219019-7bvlr19k8a6mad0a13hlmjh3kv3gujbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
