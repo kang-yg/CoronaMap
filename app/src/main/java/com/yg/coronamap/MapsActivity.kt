@@ -73,8 +73,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
-        Log.d("myInfo", "onMarkerClick")
-
         val center : CameraUpdate = CameraUpdateFactory.newLatLng(marker!!.position)
         mMap.animateCamera(center)
 
@@ -84,7 +82,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     override fun onMapClick(p0: LatLng?) {
-        Log.d("myInfo", "onMapClick")
         changeSelectedMarker(null,  GlobarVariable.getData)
     }
 

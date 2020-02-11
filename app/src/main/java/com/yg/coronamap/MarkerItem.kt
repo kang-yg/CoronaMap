@@ -9,14 +9,14 @@ class MarkerItem {
     var patientAge: Int = 0
     var patientNationality: String = ""
     var patientWuhan: Boolean = false
-    lateinit var patientEntry: Date
-    lateinit var patientDiagnosis: Date
+    lateinit var patientEntry: String
+    lateinit var patientDiagnosis: String
     var patientHospital: String = ""
     var patientContactNum: Int = 0
 
     var moveSequence: Int = 0
     var movePlace: String = ""
-    lateinit var moveDate: Date
+    lateinit var moveDate: String
     lateinit var movelatLng: LatLng
 
     constructor(
@@ -25,35 +25,13 @@ class MarkerItem {
         patientAge: Int,
         patientNationality: String,
         patientWuhan: Boolean,
-        patientEntry: Date,
-        patientDiagnosis: Date,
-        patientHospital: String,
-        patientContactNum: Int
-    ) {
-        this.patientNum = patientNum
-        this.patientGender = patientGender
-        this.patientAge = patientAge
-        this.patientNationality = patientNationality
-        this.patientWuhan = patientWuhan
-        this.patientEntry = patientEntry
-        this.patientDiagnosis = patientDiagnosis
-        this.patientHospital = patientHospital
-        this.patientContactNum = patientContactNum
-    }
-
-    constructor(
-        patientNum: Int,
-        patientGender: String,
-        patientAge: Int,
-        patientNationality: String,
-        patientWuhan: Boolean,
-        patientEntry: Date,
-        patientDiagnosis: Date,
+        patientEntry: String,
+        patientDiagnosis: String,
         patientHospital: String,
         patientContactNum: Int,
         moveSequence: Int,
         movePlace: String,
-        moveDate: Date,
+        moveDate: String,
         latLng: LatLng
     ) {
         this.patientNum = patientNum
