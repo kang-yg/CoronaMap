@@ -1,23 +1,17 @@
 package com.yg.coronamap
 
 import com.google.android.gms.maps.model.LatLng
-import java.util.*
 
-class MarkerItem {
-    var patientNum: Int = 0
+class MarkerBaseInfo {
+    var patientNum: Int = -1
     var patientGender: String = ""
-    var patientAge: Int = 0
+    var patientAge: Int = -1
     var patientNationality: String = ""
     var patientWuhan: Boolean = false
     lateinit var patientEntry: String
     lateinit var patientDiagnosis: String
     var patientHospital: String = ""
-    var patientContactNum: Int = 0
-
-    var moveSequence: Int = 0
-    var movePlace: String = ""
-    lateinit var moveDate: String
-    lateinit var movelatLng: LatLng
+    var patientContactNum: Int = -1
 
     constructor(
         patientNum: Int,
@@ -28,11 +22,7 @@ class MarkerItem {
         patientEntry: String,
         patientDiagnosis: String,
         patientHospital: String,
-        patientContactNum: Int,
-        moveSequence: Int,
-        movePlace: String,
-        moveDate: String,
-        latLng: LatLng
+        patientContactNum: Int
     ) {
         this.patientNum = patientNum
         this.patientGender = patientGender
@@ -43,14 +33,5 @@ class MarkerItem {
         this.patientDiagnosis = patientDiagnosis
         this.patientHospital = patientHospital
         this.patientContactNum = patientContactNum
-        this.moveSequence = moveSequence
-        this.movePlace = movePlace
-        this.moveDate = moveDate
-        this.movelatLng = latLng
-    }
-
-    constructor(movePlace: String, movelatLng: LatLng) {
-        this.movePlace = movePlace
-        this.movelatLng = movelatLng
     }
 }

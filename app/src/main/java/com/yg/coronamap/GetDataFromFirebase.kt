@@ -1,15 +1,8 @@
 package com.yg.coronamap
 
 import android.app.Activity
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.util.DisplayMetrics
+
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -27,26 +20,18 @@ class GetDataFromFirebase {
     lateinit var db: FirebaseFirestore
     lateinit var activity: Activity
     lateinit var mMap: GoogleMap
-    lateinit var markerRootView: View
-    lateinit var myMarker: TextView
 
     var patientCount: Int = 0
     var trackingCount: Int = 0
 
-    constructor()
-
     constructor(
         _db: FirebaseFirestore,
         _activity: Activity,
-        _mMap: GoogleMap,
-        _markerRootView: View,
-        _myMarker: TextView
+        _mMap: GoogleMap
     ) {
         this.db = _db
         this.activity = _activity
         this.mMap = _mMap
-        this.markerRootView = _markerRootView
-        this.myMarker = _myMarker
     }
 
     fun getDataFromFirebase() {
@@ -242,9 +227,8 @@ class GetDataFromFirebase {
                             Log.d("myInfo", "sequence : ${tempSequence}")
 
                             //마커 아이템 생성
-//                            var tempMarkerItem: MarkerItem = MarkerItem(tempPlace, tempLatLng!!)
-                            var tempMarkerItem: MarkerItem =
-                                MarkerItem(
+                            var tempMarkerBaseInfo: MarkerBaseInfo =
+                                MarkerBaseInfo(
                                     tempNum,
                                     tempGender,
                                     tempAge,
@@ -253,80 +237,35 @@ class GetDataFromFirebase {
                                     tempEntry,
                                     tempDiagnosis,
                                     temphospital,
-                                    tempContactNum,
-                                    tempSequence,
-                                    tempPlace,
-                                    tempDate,
-                                    tempLatLng!!
+                                    tempContactNum
                                 )
-                            myAddMarker(tempMarkerItem, false)
+
+                            //TODO 데이터를 전부 가져 온 후 setMyMarker()를 호출해야 한다
+//                            setMyMarker(tempMarkerItem)
                         }
                     }
             }
         }.addOnFailureListener { exception -> Log.w("getDataFromFirebase", exception) }
     }
 
-    //마커 추가01
-    fun myAddMarker(_markerItem: MarkerItem, isSelectMarker: Boolean): Marker {
-        val position: LatLng =
-            LatLng(_markerItem.movelatLng.latitude, _markerItem.movelatLng.longitude)
-        val place: String = _markerItem.movePlace
-        myMarker.text = place
-        if (_markerItem.patientNum == 1){
-            myMarker.setBackgroundResource(R.color.colorAccent)
-        }
+//    fun setMyMarker(tempMarkerItem: MarkerBaseInfo): Marker {
+//        val markerOption: MarkerOptions = MarkerOptions()
+//        markerOption.position(tempMarkerItem.movelatLng)
+//        markerOption.title(tempMarkerItem.movePlace)
+//
+//        when(tempMarkerItem.patientNum){
+//            0 -> {
+//                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//            }
+//
+//            1 -> {
+//                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+//
+//            }
+//        }
+//
+//
+//        return mMap.addMarker(markerOption)
+//    }
 
-        if (isSelectMarker) {
-            myMarker.setBackgroundResource(R.drawable.ic_marker_phone_blue)
-            myMarker.setTextColor(Color.WHITE)
-        } else {
-            myMarker.setBackgroundResource(R.drawable.ic_marker_phone)
-            myMarker.setTextColor(Color.BLACK)
-        }
-
-        val markerOption: MarkerOptions = MarkerOptions()
-        markerOption.title(place)
-        markerOption.position(position)
-        markerOption.icon(
-            BitmapDescriptorFactory.fromBitmap(
-                createDrawableFromView(
-                    activity,
-                    markerRootView
-                )
-            )
-        )
-
-        return mMap.addMarker(markerOption)
-    }
-
-    //마커 추가02
-    fun myAddMarker(_marker: Marker, isSelectMarker: Boolean): Marker {
-        val lat: Double = _marker.position.latitude
-        val lon: Double = _marker.position.longitude
-        val place: String = _marker.title
-        val tempLatLng: LatLng = LatLng(lat, lon)
-
-        val tempMarkerItem: MarkerItem = MarkerItem(place, tempLatLng)
-
-        return myAddMarker(tempMarkerItem, isSelectMarker)
-    }
-
-    //View를 Bitmap으로 변화
-    fun createDrawableFromView(_context: Context, _view: View): Bitmap {
-        val displayMetrics: DisplayMetrics = DisplayMetrics()
-        (_context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
-        _view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        _view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
-        _view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
-
-        val bitmap: Bitmap =
-            Bitmap.createBitmap(_view.measuredWidth, _view.measuredHeight, Bitmap.Config.ARGB_8888)
-        val myCanvas: Canvas = Canvas(bitmap)
-        _view.draw(myCanvas)
-
-        return bitmap
-    }
 }

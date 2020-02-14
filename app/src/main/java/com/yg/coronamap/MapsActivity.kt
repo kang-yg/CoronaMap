@@ -4,9 +4,6 @@ package com.yg.coronamap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.TextView
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
@@ -19,12 +16,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 //TODO 마커를 클릭하면 세부 정보를 보여줘야 한다.
 //TODO 지도에서 특정 환자만 선택해서 볼 수 있어야 한다.
 //TODO 메뉴를 만들어서 지도가 아닌 리스트의 형태로 환자별로 확인이 가능하다.
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
-    GoogleMap.OnMapClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private lateinit var mMap: GoogleMap
-    var selectedMarker : Marker? = null
-    lateinit var markerRootView: View
 
     val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -59,43 +53,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val myZoomLevel : Float = 14F
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(37.537523, 126.96558),
+                LatLng(37.520005, 126.852838),
                 myZoomLevel
             )
         )
-        mMap.setOnMarkerClickListener(this)
-        mMap.setOnMapClickListener(this)
 
-        markerRootView = LayoutInflater.from(this).inflate(R.layout.marker, null)
-        val markerTextView : TextView = markerRootView.findViewById(R.id.myMarker_textView)
-        GlobarVariable.getData = GetDataFromFirebase(db, this, mMap, markerRootView, markerTextView)
-        GlobarVariable.getData.getDataFromFirebase()
-    }
-
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        val center : CameraUpdate = CameraUpdateFactory.newLatLng(marker!!.position)
-        mMap.animateCamera(center)
-
-        changeSelectedMarker(marker,  GlobarVariable.getData)
-
-        return true
-    }
-
-    override fun onMapClick(p0: LatLng?) {
-        changeSelectedMarker(null,  GlobarVariable.getData)
-    }
-
-    fun changeSelectedMarker(_marker: Marker?, _getData : GetDataFromFirebase?){
-        //선택한 마커 선택해제
-        if (selectedMarker != null){
-            _getData!!.myAddMarker(selectedMarker!!, false)
-            selectedMarker!!.remove()
-        }
-
-        //선택한 마커 표시
-        if (_marker != null){
-            selectedMarker = _getData!!.myAddMarker(_marker, true)
-            _marker.remove()
-        }
+        val getData = GetDataFromFirebase(db, this, mMap)
+        getData.getDataFromFirebase()
     }
 }
