@@ -16,6 +16,7 @@ class MarkerMoveInfo {
         _moveDate: String,
         _movelatLng: LatLng
     ) {
+        this.movePatientNum = _movePatientNum
         this.moveSequence = _moveSequence
         this.movePlace = _movePlace
         this.moveDate = _moveDate

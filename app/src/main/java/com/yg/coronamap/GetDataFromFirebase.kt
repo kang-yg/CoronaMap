@@ -13,6 +13,7 @@ import com.google.firebase.firestore.GeoPoint
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 val PATIENT: String = "Patient"
 
@@ -23,6 +24,11 @@ class GetDataFromFirebase {
 
     var patientCount: Int = 0
     var trackingCount: Int = 0
+    var totalTrackingCount : Int = 0
+
+    var tempMarkerBaseInfoArray: ArrayList<MarkerBaseInfo> = arrayListOf()
+    var tempMarkerMoveInfoArray: ArrayList<MarkerMoveInfo> = arrayListOf()
+    lateinit var tempMarkerFinal: MarkerFinal
 
     constructor(
         _db: FirebaseFirestore,
@@ -59,12 +65,14 @@ class GetDataFromFirebase {
         var tempDate: String = "" //날짜
         var tempPlace: String = "" //장소
         var tempSequence: Int = -1 //순서
+        var tempMovePatientNum: Int = -1
 
         //환자 수
         db!!.collection("Data").get().addOnSuccessListener { documentSnapshot ->
             patientCount = documentSnapshot.size()
             Log.d("getDataFromFirebase", "patientCount : ${patientCount}")
 
+        }.addOnCompleteListener {
             //환자 기본정보
             for (i in 0 until patientCount) {
                 db!!.collection("Data").document(PATIENT.plus(i)).collection("BaseInfo").get()
@@ -164,9 +172,26 @@ class GetDataFromFirebase {
                             documentSnapshot.documentChanges[0].document.get("wuhan").toString()
                                 .toBoolean()
                         Log.d("myInfo", "wuhan : ${tempWuhan}")
+
+                        //마커 기본정보 객체
+                        var tempMarkerBaseInfo: MarkerBaseInfo =
+                            MarkerBaseInfo(
+                                tempNum,
+                                tempGender,
+                                tempAge,
+                                tempNationality,
+                                tempWuhan,
+                                tempEntry,
+                                tempDiagnosis,
+                                temphospital,
+                                tempContactNum
+                            )
+                        tempMarkerBaseInfoArray.add(tempMarkerBaseInfo)
+
+                        Log.d("myCount", "base : ${tempMarkerBaseInfoArray.size}")
                     }
             }
-
+        }.addOnCompleteListener {
             //환자 이동정보
             for (i in 0 until patientCount) {
                 db!!.collection("Data").document(PATIENT.plus(i)).collection("MoveInfo").get()
@@ -176,6 +201,7 @@ class GetDataFromFirebase {
                             "TrackingCount : ${documentSnapshot.documentChanges.size}"
                         )
                         trackingCount = documentSnapshot.documentChanges.size
+                        totalTrackingCount += trackingCount
                         //환자의 Tracking갯수에 따른 반복
                         for (j in 0 until trackingCount) {
                             Log.d(
@@ -226,46 +252,54 @@ class GetDataFromFirebase {
                                     .toString().toInt()
                             Log.d("myInfo", "sequence : ${tempSequence}")
 
-                            //마커 아이템 생성
-                            var tempMarkerBaseInfo: MarkerBaseInfo =
-                                MarkerBaseInfo(
-                                    tempNum,
-                                    tempGender,
-                                    tempAge,
-                                    tempNationality,
-                                    tempWuhan,
-                                    tempEntry,
-                                    tempDiagnosis,
-                                    temphospital,
-                                    tempContactNum
-                                )
+                            //환자 번호
+                            Log.d(
+                                "getDataFromFirebase",
+                                "${documentSnapshot.documentChanges[j].document.get("num")}"
+                            )
+                            tempMovePatientNum =
+                                documentSnapshot.documentChanges[j].document.get("num")
+                                    .toString().toInt()
+                            Log.d("myInfo", "MovePatientNum : ${tempMovePatientNum}")
 
-                            //TODO 데이터를 전부 가져 온 후 setMyMarker()를 호출해야 한다
-//                            setMyMarker(tempMarkerItem)
+                            //마커 이동정보 객체
+                            var tempMarkerMoveInfo: MarkerMoveInfo = MarkerMoveInfo(
+                                tempMovePatientNum,
+                                tempSequence,
+                                tempPlace,
+                                tempDate,
+                                tempLatLng!!
+                            )
+                            tempMarkerMoveInfoArray.add(tempMarkerMoveInfo)
+
+                            Log.d("myCount", "move : ${tempMarkerMoveInfoArray.size}")
+
+                            if (tempMarkerBaseInfoArray.size == patientCount && tempMarkerMoveInfoArray.size == totalTrackingCount){
+                                Log.d("myCount", "getAllDatas")
+                            }
                         }
                     }
             }
-        }.addOnFailureListener { exception -> Log.w("getDataFromFirebase", exception) }
+        }
     }
 
-//    fun setMyMarker(tempMarkerItem: MarkerBaseInfo): Marker {
-//        val markerOption: MarkerOptions = MarkerOptions()
-//        markerOption.position(tempMarkerItem.movelatLng)
-//        markerOption.title(tempMarkerItem.movePlace)
-//
-//        when(tempMarkerItem.patientNum){
-//            0 -> {
-//                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-//            }
-//
-//            1 -> {
-//                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-//
-//            }
-//        }
-//
-//
-//        return mMap.addMarker(markerOption)
-//    }
+    fun setMyMarker(_tempMarkerFinal: MarkerFinal): Marker {
+        val markerOption: MarkerOptions = MarkerOptions()
+        markerOption.position(_tempMarkerFinal.finalMoveInfo.movelatLng)
+        markerOption.title(_tempMarkerFinal.finalMoveInfo.movePlace)
+
+        when (_tempMarkerFinal.finalBaseInfo.patientNum) {
+            0 -> {
+                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+            }
+
+            1 -> {
+                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+
+            }
+        }
+
+        return mMap.addMarker(markerOption)
+    }
 
 }

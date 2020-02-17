@@ -1,7 +1,5 @@
 package com.yg.coronamap
 
-import com.google.android.gms.maps.model.LatLng
-
 class MarkerBaseInfo {
     var patientNum: Int = -1
     var patientGender: String = ""
