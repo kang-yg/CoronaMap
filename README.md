@@ -15,4 +15,4 @@
     calendar.setTimeInMillis(milliSeconds);
     return formatter.format(calendar.getTime());
 
-* 
+* 동일한 Firebase Firestore 내의 다른 Collection에서 데이터를 가져올 경우 FirebaseFirestore객체를 여러번 사용해 데이터를 가져오게 된다. 이 때 addOnCompleteListener를 사용해도 Collection의 순서를 보장받지 못한다.<br>
