@@ -17,3 +17,7 @@
 
 * 동일한 Firebase Firestore 내의 다른 Collection에서 데이터를 가져올 경우 FirebaseFirestore객체를 여러번 사용해 데이터를 가져오게 된다. 이 때 addOnCompleteListener를 사용해도 Collection의 순서를 보장받지 못한다.<br>
 → Firebase Firestore Collection과 Field를 수정해서 해결.<br>
+
+* GoogleMap Polyline<br>
+https://stackoverflow.com/a/16631189/12355451<br>
+PolylineOptions에 LatLan을 추가할 때 좌표 하나하나를 추가하지 않고 ArrayList에 좌표를 저장하고 PolylineOptions().add(arrayList)도 가능하다.<br>

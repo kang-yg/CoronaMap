@@ -1,18 +1,17 @@
 package com.yg.coronamap
 
 import android.app.Activity
+import android.graphics.Color
 
 import android.util.Log
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 val INFO: String = "Info"
 
@@ -20,6 +19,13 @@ class GetDataFromFirebase {
     lateinit var db: FirebaseFirestore
     lateinit var activity: Activity
     lateinit var mMap: GoogleMap
+
+    var line02: ArrayList<LatLng> = arrayListOf()
+    lateinit var myPolylineOptions02: PolylineOptions
+    var line03: ArrayList<LatLng> = arrayListOf()
+    lateinit var myPolylineOptions03: PolylineOptions
+    var line04: ArrayList<LatLng> = arrayListOf()
+    lateinit var myPolylineOptions04: PolylineOptions
 
     var infoCount: Int = 0
 
@@ -65,7 +71,6 @@ class GetDataFromFirebase {
             Log.d("getDataFromFirebase", "infoCount : ${infoCount}")
 
         }.addOnCompleteListener {
-            //환자 기본정보
             for (i in 0 until infoCount) {
                 db!!.collection("Data").document(INFO.plus(i)).get()
                     .addOnSuccessListener { documentSnapshot ->
@@ -236,6 +241,7 @@ class GetDataFromFirebase {
                         )
 
                         setMyMarker(tempMarkerInfo)
+                        setLine()
                     }
             }
         }
@@ -247,17 +253,34 @@ class GetDataFromFirebase {
         markerOption.title(_tempMarkerInfo.movePlace)
 
         when (_tempMarkerInfo.patientNum) {
-            0 -> {
+            2 -> {
                 markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                line02.add(_tempMarkerInfo.movelatLng)
             }
 
-            1 -> {
+            3 -> {
                 markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                line03.add(_tempMarkerInfo.movelatLng)
+            }
 
+            4 -> {
+                markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                line04.add(_tempMarkerInfo.movelatLng)
             }
         }
 
         return mMap.addMarker(markerOption)
     }
 
+    fun setLine() {
+        val myWidth: Float = 5F
+
+        myPolylineOptions02 = PolylineOptions().addAll(line02).width(myWidth).color(Color.BLUE)
+        myPolylineOptions03 = PolylineOptions().addAll(line03).width(myWidth).color(Color.GREEN)
+        myPolylineOptions04 = PolylineOptions().addAll(line04).width(myWidth).color(Color.RED)
+
+        mMap.addPolyline(myPolylineOptions02)
+        mMap.addPolyline(myPolylineOptions03)
+        mMap.addPolyline(myPolylineOptions04)
+    }
 }
