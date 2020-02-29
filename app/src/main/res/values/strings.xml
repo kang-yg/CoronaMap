@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">CoronaMap</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="allPatient">전체</string>
+    <string name="partPatient">번째</string>
 </resources>

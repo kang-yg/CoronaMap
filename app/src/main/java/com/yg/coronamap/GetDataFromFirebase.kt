@@ -2,12 +2,16 @@ package com.yg.coronamap
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.ColorSpace
 
 import android.util.Log
+import android.widget.ArrayAdapter
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import kotlinx.android.synthetic.main.activity_maps.*
+import java.lang.Integer.parseInt
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +32,7 @@ class GetDataFromFirebase {
     lateinit var myPolylineOptions04: PolylineOptions
 
     var infoCount: Int = 0
+    var patientCount: Int = 0
 
     constructor(
         _db: FirebaseFirestore,
@@ -224,6 +229,10 @@ class GetDataFromFirebase {
                             "------------------------------end------------------------------"
                         )
 
+                        if (tempNum > patientCount) {
+                            patientCount = tempNum
+                        }
+
                         val tempMarkerInfo: MarkerInfo = MarkerInfo(
                             tempNum,
                             tempGender,
@@ -242,6 +251,7 @@ class GetDataFromFirebase {
 
                         setMyMarker(tempMarkerInfo)
                         setLine()
+                        setSpinner(patientCount)
                     }
             }
         }
@@ -275,12 +285,47 @@ class GetDataFromFirebase {
     fun setLine() {
         val myWidth: Float = 5F
 
-        myPolylineOptions02 = PolylineOptions().addAll(line02).width(myWidth).color(Color.BLUE)
+        myPolylineOptions02 = PolylineOptions().addAll(line02).width(myWidth).color(Color.RED)
         myPolylineOptions03 = PolylineOptions().addAll(line03).width(myWidth).color(Color.GREEN)
-        myPolylineOptions04 = PolylineOptions().addAll(line04).width(myWidth).color(Color.RED)
+        myPolylineOptions04 = PolylineOptions().addAll(line04).width(myWidth).color(Color.BLUE)
 
         mMap.addPolyline(myPolylineOptions02)
         mMap.addPolyline(myPolylineOptions03)
         mMap.addPolyline(myPolylineOptions04)
+    }
+
+    fun getHue(color: String): Float {
+        var r: Int = Integer.parseInt(color.substring(0, 2), 16) / 255
+        var g: Int = Integer.parseInt(color.substring(2, 4), 16) / 255
+        var b: Int = Integer.parseInt(color.substring(4, 6), 16) / 255
+
+        var hue: Int? = null
+        if ((r >= g) && (g >= b)) {
+            hue = 60 * (g - b) / (r - b)
+        } else if ((g > r) && (r >= b)) {
+            hue = 60 * (2 - (r - b) / (g - b))
+        } else if ((g >= b) && (b > r)) {
+            hue = 60 * (2 + (b - r) / (g - r))
+        } else if ((b > g) && (g > r)) {
+            hue = 60 * (4 - (g - r) / (b - r))
+        } else if ((b > r) && (r >= g)) {
+            hue = 60 * (4 + (r - g) / (b - g))
+        } else {
+            hue = 60 * (6 - (b - g) / (r - g))
+        }
+        return hue!!.toFloat()
+    }
+
+    fun setSpinner(_patientCount: Int) {
+        val itemList: ArrayList<String> = arrayListOf()
+        itemList.add(activity.resources.getString(R.string.allPatient))
+        for (i in 1.._patientCount) {
+            itemList.add("${i}".plus(activity.resources.getString(R.string.partPatient)))
+        }
+
+        //TODO Add spinner item click evet
+        val mySpinnerAdapter : ArrayAdapter<String> = ArrayAdapter(activity, android.R.layout.simple_spinner_item, itemList)
+        activity.mySpinner.adapter = mySpinnerAdapter
+        activity.mySpinner.setOnItemClickListener { parent, view, position, id ->  }
     }
 }

@@ -9,11 +9,8 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_maps.*
 
-
-//TODO 마커에 환자의 번호를 표시하며, 색을 다르게 한다.
-//TODO 같은 환자의 마커를 선으로 이어야 한다.
-//TODO 마커를 클릭하면 세부 정보를 보여줘야 한다.
 //TODO 지도에서 특정 환자만 선택해서 볼 수 있어야 한다.
 //TODO 메뉴를 만들어서 지도가 아닌 리스트의 형태로 환자별로 확인이 가능하다.
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback{

@@ -20,4 +20,42 @@
 
 * GoogleMap Polyline<br>
 https://stackoverflow.com/a/16631189/12355451<br>
-PolylineOptions에 LatLan을 추가할 때 좌표 하나하나를 추가하지 않고 ArrayList에 좌표를 저장하고 PolylineOptions().add(arrayList)도 가능하다.<br>
+PolylineOptions에 LatLan을 추가할 때 좌표 하나하나를 추가하지 않고 ArrayList에 좌표를 저장하고 PolylineOptions().addAll(arrayList)도 가능하다.<br>
+
+* marker의 Color변경<br>
+https://stackoverflow.com/a/27322075/12355451<br>
+https://stackoverflow.com/a/3732073/12355451<br>
+https://en.wikipedia.org/wiki/Hue#Computing_hue_from_RGB<br>
+
+BitmapDescriptorFactory에 정의되어 있는 10가지 색은 아래와 같이 사용하면 된다.<br>
+    markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+
+BitmapDescriptorFactory에 정의되어 있지 않은 색을 사용하기 위해서는<br>
+BitmapDescriptorFactory.defaultMarker()에 16진수를 전달한다. 전달한 16진수를 RGB값으로 변환해서 반환해 줘야 한다.<br>
+
+    markerOption.icon(BitmapDescriptorFactory.defaultMarker(getHue("33FFFF")))
+
+    fun getHue(color: String): Float {
+        var r: Int = Integer.parseInt(color.substring(0, 2), 16) / 255
+        var g: Int = Integer.parseInt(color.substring(2, 4), 16) / 255
+        var b: Int = Integer.parseInt(color.substring(4, 6), 16) / 255
+
+        var hue: Int? = null
+        if ((r >= g) && (g >= b)) {
+            hue = 60 * (g - b) / (r - b)
+        } else if ((g > r) && (r >= b)) {
+            hue = 60 * (2 - (r - b) / (g - b))
+        } else if ((g >= b) && (b > r)) {
+            hue = 60 * (2 + (b - r) / (g - r))
+        } else if ((b > g) && (g > r)) {
+            hue = 60 * (4 - (g - r) / (b - r))
+        } else if ((b > r) && (r >= g)) {
+            hue = 60 * (4 + (r - g) / (b - g))
+        } else {
+            hue = 60 * (6 - (b - g) / (r - g))
+        }
+        return hue!!.toFloat()
+    }
+
+* GoogleMap은 XML의 <Fragment>태그로 정의되어 있다. 이 GoogleMap위에 위젯을 올리리고 싶다면 <FrameLayout>으로 GoogleMap과 위젯을 감싸주면 된다.<br>
+https://stackoverflow.com/a/22095238/12355451<br>
