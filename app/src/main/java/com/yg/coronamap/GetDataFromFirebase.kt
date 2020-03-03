@@ -2,16 +2,16 @@ package com.yg.coronamap
 
 import android.app.Activity
 import android.graphics.Color
-import android.graphics.ColorSpace
 
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.synthetic.main.activity_maps.*
-import java.lang.Integer.parseInt
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,12 +24,17 @@ class GetDataFromFirebase {
     lateinit var activity: Activity
     lateinit var mMap: GoogleMap
 
+    var select: Int = -1
+    var spinnerFlag: Boolean = true
+
     var line02: ArrayList<LatLng> = arrayListOf()
     lateinit var myPolylineOptions02: PolylineOptions
     var line03: ArrayList<LatLng> = arrayListOf()
     lateinit var myPolylineOptions03: PolylineOptions
     var line04: ArrayList<LatLng> = arrayListOf()
     lateinit var myPolylineOptions04: PolylineOptions
+    var lineSelect: ArrayList<LatLng> = arrayListOf()
+    lateinit var myPolylineOptionsSelect: PolylineOptions
 
     var infoCount: Int = 0
     var patientCount: Int = 0
@@ -249,9 +254,14 @@ class GetDataFromFirebase {
                             tempLatLng!!
                         )
 
-                        setMyMarker(tempMarkerInfo)
-                        setLine()
-                        setSpinner(patientCount)
+                        if (select == -1) {
+                            setMyMarker(tempMarkerInfo)
+                            setSpinner(patientCount)
+                            setLine()
+                        } else {
+                            setMyMarker(tempMarkerInfo, select)
+                        }
+
                     }
             }
         }
@@ -280,6 +290,21 @@ class GetDataFromFirebase {
         }
 
         return mMap.addMarker(markerOption)
+    }
+
+    fun setMyMarker(_tempMarkerInfo: MarkerInfo, _select: Int) {
+        val markerOption: MarkerOptions = MarkerOptions()
+        markerOption.position(_tempMarkerInfo.movelatLng)
+        markerOption.title(_tempMarkerInfo.movePlace)
+
+        if (_select == _tempMarkerInfo.patientNum) {
+            lineSelect.add(_tempMarkerInfo.movelatLng)
+            myPolylineOptionsSelect =
+                PolylineOptions().addAll(lineSelect).width(5F).color(Color.RED)
+
+            mMap.addPolyline(myPolylineOptionsSelect)
+            mMap.addMarker(markerOption)
+        }
     }
 
     fun setLine() {
@@ -323,9 +348,30 @@ class GetDataFromFirebase {
             itemList.add("${i}".plus(activity.resources.getString(R.string.partPatient)))
         }
 
-        //TODO Add spinner item click evet
-        val mySpinnerAdapter : ArrayAdapter<String> = ArrayAdapter(activity, android.R.layout.simple_spinner_item, itemList)
+        val mySpinnerAdapter: ArrayAdapter<String> =
+            ArrayAdapter(activity, android.R.layout.simple_spinner_item, itemList)
         activity.mySpinner.adapter = mySpinnerAdapter
-        activity.mySpinner.setOnItemClickListener { parent, view, position, id ->  }
+
+        activity.mySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                select = p2
+
+                if (p2 != 0) {
+                    mMap.clear()
+                    lineSelect.clear()
+                    spinnerFlag = true
+                    getDataFromFirebase()
+                } else {
+                    if (spinnerFlag){
+                        select = -1
+                        getDataFromFirebase()
+                        spinnerFlag = false
+                    }
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
     }
 }

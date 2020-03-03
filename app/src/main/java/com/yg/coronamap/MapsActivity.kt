@@ -7,13 +7,10 @@ import android.util.Log
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_maps.*
 
-//TODO 지도에서 특정 환자만 선택해서 볼 수 있어야 한다.
 //TODO 메뉴를 만들어서 지도가 아닌 리스트의 형태로 환자별로 확인이 가능하다.
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
 
@@ -47,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))*/
 
-        val myZoomLevel : Float = 14F
+        val myZoomLevel: Float = 14F
         mMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(37.520005, 126.852838),
