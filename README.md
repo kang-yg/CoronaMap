@@ -1,3 +1,7 @@
+![KakaoTalk_20200312_152342377_02](https://user-images.githubusercontent.com/38394861/79035596-1d7d9a80-7bfb-11ea-803e-42a1f05b952e.jpg)
+![KakaoTalk_20200312_152342377_01](https://user-images.githubusercontent.com/38394861/79035597-1f475e00-7bfb-11ea-96b8-b4ee11c4de0d.jpg)
+
+
 * Asyctask의 onPreExecute(), doInBackground() 메소드에서 Firebase에 저장된 데이터를 두개의 메소드를 통해 가져올 경우 두 메소드의 순서를 보장받지 못한다, → 데이터를 가져오는 두 메소드를 하나로 합침<br>
 
 * Firebase에서 데이터를 가져오는 리스너는 자체적으로 비동기를 지원하므로 Asyctask와 같은 비동이 처리를 따로 하지 않아도 된다.<br>
